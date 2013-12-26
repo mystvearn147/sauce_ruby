@@ -33,9 +33,13 @@ module Sauce
 
       @process_status = $?
       at_exit do
-        Process.kill("INT", @pipe.pid)
-        while @ready
-          sleep 1
+        begin
+          Process.kill("INT", @pipe.pid)
+          while @ready
+            sleep 1
+          end
+        rescue Errno::ESRCH
+          #
         end
       end
       Thread.new {
@@ -86,9 +90,13 @@ module Sauce
 
     def disconnect
       if @ready
-        Process.kill("INT", @pipe.pid)
-        while @ready
-          sleep 1
+        begin
+          Process.kill("INT", @pipe.pid)
+          while @ready
+            sleep 1
+          end
+        rescue Errno::ESRCH
+          #
         end
       end
     end
